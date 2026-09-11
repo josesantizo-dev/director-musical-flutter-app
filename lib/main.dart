@@ -1,3 +1,4 @@
+import 'package:director_musical_app/config/constants/environment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,9 @@ import 'package:director_musical_app/config/router/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Environment.initEnvironment();
+
   await FirebaseConfig.initializeFirebase();
   await GoogleSignIn.instance.initialize();
 

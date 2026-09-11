@@ -16,4 +16,12 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<FirebaseAuthEntity> googleLogin() {
     return _dataSource.googleLogin();
   }
+
+  @override
+  Future<Map<String, dynamic>> firebaseLogin({
+    required String firebaseToken,
+  }) async {
+    final res = await _dataSource.firebaseLogin(firebaseToken: firebaseToken);
+    return res;
+  }
 }
