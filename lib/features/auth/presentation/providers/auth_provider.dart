@@ -1,5 +1,5 @@
 import 'package:director_musical_app/features/auth/domain/entities/firebase_auth.dart';
-import 'package:director_musical_app/features/auth/infrastructure/repositories/auth_repository_impl.dart';
+import 'package:director_musical_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:director_musical_app/features/auth/presentation/providers/auth_repository_provider.dart';
 import 'package:director_musical_app/features/shared/domain/adapters/local_storage_adapter.dart';
 import 'package:director_musical_app/features/shared/domain/custom_errors.dart';
@@ -13,7 +13,7 @@ final authProvider = NotifierProvider.autoDispose<AuthNotifier, AuthState>(
 );
 
 class AuthNotifier extends Notifier<AuthState> {
-  late final AuthRepositoryImpl authRepository;
+  late final AuthRepository authRepository;
   late final LocalStorageAdapter _localStorageAdapter;
 
   @override

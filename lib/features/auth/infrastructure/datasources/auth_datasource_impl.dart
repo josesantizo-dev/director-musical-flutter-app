@@ -1,11 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:director_musical_app/config/constants/environment.dart';
 import 'package:director_musical_app/features/auth/domain/datasources/auth_datasource.dart';
 import 'package:director_musical_app/features/auth/domain/entities/firebase_auth.dart';
 import 'package:director_musical_app/features/auth/domain/entities/user_entity.dart';
 import 'package:director_musical_app/features/auth/infrastructure/mappers/user_mapper.dart';
+import 'package:director_musical_app/features/shared/domain/adapters/http_adapter.dart';
 import 'package:director_musical_app/features/shared/domain/custom_errors.dart';
-import 'package:director_musical_app/features/shared/infrastructure/adapters/dio_adapter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -15,10 +14,10 @@ class AuthDatasourceImpl extends AuthDatasource {
     throw UnimplementedError();
   }
 
-  final DioAdapter _dioAdapter;
+  final HttpAdapter _httpAdapter;
 
-  AuthDatasourceImpl()
-    : _dioAdapter = DioAdapter(baseUrl: '${Environment.apiUrl}/auth');
+  AuthDatasourceImpl({required this._httpAdapter});
+
 
   @override
   Future<FirebaseAuthEntity> googleLogin() async {
@@ -63,7 +62,7 @@ class AuthDatasourceImpl extends AuthDatasource {
     required String firebaseToken,
   }) async {
     try {
-      final res = await _dioAdapter.post(
+      final res = await _httpAdapter.post(
         path: '/firebase-login',
         body: {'token': firebaseToken},
       );
