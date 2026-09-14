@@ -1,10 +1,10 @@
 abstract class HttpAdapter {
-  Future<Map<String, dynamic>> get({
+  Future<T> get<T>({
     required String path,
     Map<String, dynamic>? queryParams,
     required String token,
   });
-  Future<Map<String, dynamic>> post({
+  Future<T> post<T>({
     required String path,
     Map<String, dynamic>? body,
     String? token,

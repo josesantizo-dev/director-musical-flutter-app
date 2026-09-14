@@ -1,7 +1,9 @@
 import 'package:director_musical_app/features/auth/domain/entities/firebase_auth.dart';
 import 'package:director_musical_app/features/auth/infrastructure/repositories/auth_repository_impl.dart';
 import 'package:director_musical_app/features/auth/presentation/providers/auth_repository_provider.dart';
+import 'package:director_musical_app/features/shared/domain/adapters/local_storage_adapter.dart';
 import 'package:director_musical_app/features/shared/domain/custom_errors.dart';
+import 'package:director_musical_app/features/shared/presentation/providers/local_storage_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AuthStatus { checking, authenticated, unauthenticated }
@@ -12,10 +14,12 @@ final authProvider = NotifierProvider.autoDispose<AuthNotifier, AuthState>(
 
 class AuthNotifier extends Notifier<AuthState> {
   late final AuthRepositoryImpl authRepository;
+  late final LocalStorageAdapter _localStorageAdapter;
 
   @override
   AuthState build() {
     authRepository = ref.read(authRepositoryProvider);
+    _localStorageAdapter = ref.read(localStorageProvider);
     return AuthState();
   }
 
@@ -24,9 +28,12 @@ class AuthNotifier extends Notifier<AuthState> {
       final FirebaseAuthEntity firebaseSession = await authRepository
           .googleLogin();
 
-      await authRepository.firebaseLogin(
+      final res = await authRepository.firebaseLogin(
         firebaseToken: firebaseSession.token,
       );
+
+      _localStorageAdapter.setValue<String>('accessToken', res.accessToken);
+      _localStorageAdapter.setValue<String>('refreshToken', res.refreshToken);
 
       if (firebaseSession.token.isNotEmpty) {
         state = state.copyWith(authStatus: AuthStatus.authenticated);

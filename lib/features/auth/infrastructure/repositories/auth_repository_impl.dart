@@ -1,5 +1,6 @@
 import 'package:director_musical_app/features/auth/domain/datasources/auth_datasource.dart';
 import 'package:director_musical_app/features/auth/domain/entities/firebase_auth.dart';
+import 'package:director_musical_app/features/auth/domain/entities/user_entity.dart';
 import 'package:director_musical_app/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -18,7 +19,7 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<Map<String, dynamic>> firebaseLogin({
+  Future<UserEntity> firebaseLogin({
     required String firebaseToken,
   }) async {
     final res = await _dataSource.firebaseLogin(firebaseToken: firebaseToken);

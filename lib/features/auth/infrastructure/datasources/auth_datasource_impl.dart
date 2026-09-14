@@ -2,8 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:director_musical_app/config/constants/environment.dart';
 import 'package:director_musical_app/features/auth/domain/datasources/auth_datasource.dart';
 import 'package:director_musical_app/features/auth/domain/entities/firebase_auth.dart';
+import 'package:director_musical_app/features/auth/domain/entities/user_entity.dart';
+import 'package:director_musical_app/features/auth/infrastructure/mappers/user_mapper.dart';
 import 'package:director_musical_app/features/shared/domain/custom_errors.dart';
-import 'package:director_musical_app/features/shared/infrastructure/dio_adapter.dart';
+import 'package:director_musical_app/features/shared/infrastructure/adapters/dio_adapter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -57,7 +59,7 @@ class AuthDatasourceImpl extends AuthDatasource {
   }
 
   @override
-  Future<Map<String, dynamic>> firebaseLogin({
+  Future<UserEntity> firebaseLogin({
     required String firebaseToken,
   }) async {
     try {
@@ -66,7 +68,9 @@ class AuthDatasourceImpl extends AuthDatasource {
         body: {'token': firebaseToken},
       );
 
-      return res;
+      final user = UserMapper.jsonToEntity(res);
+
+      return user;
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) throw InvalidCredentials();
       if (e.type == DioExceptionType.connectionTimeout ||
