@@ -32,7 +32,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      if (destination == '/') return '/';
+      if (authStatus == AuthStatus.unauthenticated) {
+        if (destination != '/' || destination == '/loading') return '/';
+        return null;
+      }
 
       return null;
     },

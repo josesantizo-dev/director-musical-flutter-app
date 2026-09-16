@@ -13,12 +13,12 @@ final authProvider = NotifierProvider.autoDispose<AuthNotifier, AuthState>(
 );
 
 class AuthNotifier extends Notifier<AuthState> {
-  late final AuthRepository authRepository;
+  late final AuthRepository _authRepository;
   late final LocalStorageAdapter _localStorageAdapter;
 
   @override
   AuthState build() {
-    authRepository = ref.read(authRepositoryProvider);
+    _authRepository = ref.read(authRepositoryProvider);
     _localStorageAdapter = ref.read(localStorageProvider);
     checkStatus();
     return AuthState();
@@ -37,12 +37,30 @@ class AuthNotifier extends Notifier<AuthState> {
     } catch (e) {}
   }
 
+  void logOut() async {
+    try {
+      final accessTokenDeletion = await _localStorageAdapter.removeKey('accessToken');
+      final refreshTokenDeletion = await _localStorageAdapter.removeKey('refreshToken');
+
+      if (accessTokenDeletion && refreshTokenDeletion) {
+        state = state.copyWith(
+          authStatus: AuthStatus.unauthenticated
+        );
+      }
+
+    } catch (e) {
+      
+    }
+  }
+
   Future<void> googleAuthentication() async {
     try {
-      final FirebaseAuthEntity firebaseSession = await authRepository
+      state = state.copyWith(authStatus: AuthStatus.checking);
+
+      final FirebaseAuthEntity firebaseSession = await _authRepository
           .googleLogin();
 
-      final res = await authRepository.firebaseLogin(
+      final res = await _authRepository.firebaseLogin(
         firebaseToken: firebaseSession.token,
       );
 
