@@ -20,7 +20,21 @@ class AuthNotifier extends Notifier<AuthState> {
   AuthState build() {
     authRepository = ref.read(authRepositoryProvider);
     _localStorageAdapter = ref.read(localStorageProvider);
+    checkStatus();
     return AuthState();
+  }
+
+  void checkStatus() async {
+    try {
+      final accessToken = await _localStorageAdapter.getValue<String>(
+        'accessToken',
+      );
+      if (accessToken != null) {
+        state = state.copyWith(authStatus: AuthStatus.authenticated);
+      } else {
+        state = state.copyWith(authStatus: AuthStatus.unauthenticated);
+      }
+    } catch (e) {}
   }
 
   Future<void> googleAuthentication() async {
